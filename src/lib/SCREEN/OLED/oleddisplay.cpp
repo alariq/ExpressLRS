@@ -81,6 +81,7 @@ void OLEDDisplay::init()
     else if (OPT_USE_OLED_I2C)
         u8g2 = new U8G2_SSD1306_128X64_NONAME_F_HW_I2C(OPT_OLED_REVERSED ? U8G2_R2 : U8G2_R0, GPIO_PIN_OLED_RST, GPIO_PIN_OLED_SCK, GPIO_PIN_OLED_SDA);
 
+    u8g2->setBusClock(400000);
     u8g2->begin();
     u8g2->clearBuffer();
 }

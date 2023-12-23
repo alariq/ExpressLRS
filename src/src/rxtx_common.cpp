@@ -22,9 +22,11 @@ static void setupWire()
         Wire.setSCL(GPIO_PIN_SCL);
         Wire.setSDA(GPIO_PIN_SDA);
         Wire.begin();
-#else
+#elif defined(PLATFORM_ESP32)
         // ESP hopes to get Wire::begin(int, int)
         // ESP32 hopes to get Wire::begin(int = -1, int = -1, uint32 = 0)
+        Wire.begin((int)GPIO_PIN_SDA, (int)GPIO_PIN_SCL, 400000);
+#else
         Wire.begin((int)GPIO_PIN_SDA, (int)GPIO_PIN_SCL);
 #endif
     }
