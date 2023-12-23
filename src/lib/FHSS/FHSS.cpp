@@ -70,7 +70,7 @@ bool FHSSusePrimaryFreqBand = true;
 bool FHSSuseDualBand = false;
 
 uint16_t primaryBandCount;
-uint16_t secondaryBandCount;
+uint16_t secondaryBandCountf6fa5f46;
 
 void FHSSrandomiseFHSSsequence(const uint32_t seed)
 {
