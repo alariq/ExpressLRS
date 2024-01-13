@@ -28,6 +28,9 @@ const fhss_config_t domainsDualBand[] = {
 };
 #endif
 
+//sebi: by default use FCC frequencies
+fhss_config_t cust_domain = {"CUSTOM", FREQ_HZ_TO_REG_VAL(903500000), FREQ_HZ_TO_REG_VAL(926900000), 40, 915000000};
+
 #elif defined(RADIO_SX128X)
 #include "SX1280Driver.h"
 
@@ -75,6 +78,25 @@ uint16_t secondaryBandCountf6fa5f46;
 void FHSSrandomiseFHSSsequence(const uint32_t seed)
 {
     FHSSconfig = &domains[firmwareOptions.domain];
+
+//sebi
+#if defined(RADIO_SX127X)
+    if(firmwareOptions.use_cust_freq) {
+        uint32_t fs = firmwareOptions.cust_freq_s;
+        uint32_t fe = firmwareOptions.cust_freq_e;
+        // SX127X chip max bw is 500kHz, use 0.585 as in FCC
+        uint32_t fcnt = (uint32_t)((fe - fs)/0.585f);
+
+        cust_domain.freq_start = FREQ_HZ_TO_REG_VAL(fs*1e6);
+        cust_domain.freq_stop = FREQ_HZ_TO_REG_VAL(fe*1e6);
+        cust_domain.freq_center = (fe+fs)*1e6/2;
+        cust_domain.freq_count = fcnt;
+
+        FHSSconfig = &cust_domain;
+    }
+#endif
+//~
+
     sync_channel = (FHSSconfig->freq_count / 2) + 1;
     freq_spread = (FHSSconfig->freq_stop - FHSSconfig->freq_start) * FREQ_SPREAD_SCALE / (FHSSconfig->freq_count - 1);
     primaryBandCount = (FHSS_SEQUENCE_LEN / FHSSconfig->freq_count) * FHSSconfig->freq_count;

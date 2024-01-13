@@ -253,6 +253,21 @@ function updatePwmSettings(arPwm) {
 @@end
 
 function init() {
+  //sebi
+  _('use_cust_freq').onclick = () => {
+    //alert("Hi");
+    if(_('use_cust_freq').checked) {
+      _('cust_freq_table').style.display = 'block';
+      _('reg_domain_select').style.display = 'none';
+    } else {
+      _('cust_freq_table').style.display = 'none';
+      _('reg_domain_select').style.display = 'block';
+    }
+  };
+  // onchange is called when options are loaded
+  _('use_cust_freq').onchange = () => _('use_cust_freq').onclick();
+  //~
+
   // setup network radio button handling
   _('nt0').onclick = () => _('credentials').style.display = 'block';
   _('nt1').onclick = () => _('credentials').style.display = 'block';
@@ -351,6 +366,8 @@ function updateConfig(data, options) {
   }
   originalUIDType = data.uidtype;
   updateUIDType(data.uidtype);
+
+  if (options.use_cust_freq) _('domain_override').textContent = "overriden"; //sebi:
 
   if (data.mode==='STA') {
     _('stamode').style.display = 'block';
