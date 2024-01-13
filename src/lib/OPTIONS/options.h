@@ -22,6 +22,11 @@ typedef struct _options {
     uint8_t     _magic_[8];     // this is the magic constant so the configurator can find this options block
     uint16_t    _version_;      // the version of this structure
     uint8_t     domain;         // depends on radio chip
+    //sebi
+    uint8_t     use_cust_freq;
+    uint16_t    cust_freq_s;
+    uint16_t    cust_freq_e;
+    //~
     uint8_t     hasUID;
     uint8_t     uid[6];         // MY_UID derived from MY_BINDING_PHRASE
 #if defined(PLATFORM_ESP32) || defined(PLATFORM_ESP8266)

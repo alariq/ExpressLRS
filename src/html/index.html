@@ -14,7 +14,7 @@
 		@@include("logo-template.svg")
 		<h1><b>ExpressLRS</b></h1>
 		<span id="product_name"></span><br/>
-		<b>Firmware Rev. </b>@@{VERSION} <span id="reg_domain"></span>
+		<b>Firmware Rev. </b>@@{VERSION} <span id="reg_domain"></span> <span id="domain_override"></span>
 	</header>
 	<br/>
 	<div class="mui-container-fluid">
@@ -53,7 +53,7 @@
 							<input size='40' id='uid' name='uid' type='text' class='array' readonly/>
 						</div>
 @@if sx127x:
-						<div class="mui-select">
+						<div class="mui-select" id="reg_domain_select">
 							<select id='domain' name='domain'>
 								<option value='0'>UA 960-970 8ch</option>
 								<option value='1'>FCC915</option>
@@ -64,6 +64,16 @@
 							</select>
 							<label>Regulatory domain</label>
 						</div>
+
+						<div class="mui-checkbox">
+							<label><input id='use_cust_freq' name='use_cust_freq' type='checkbox'/>Use Custom frequency</label>
+						</div>
+
+						<table class="mui-table" id='cust_freq_table'>
+							<tr><td colspan='2'><b>Custom Freq Setup</td></tr>
+							<tr><td width="30"></td><td>Start Freq</td><td><input size='3' id='cust_freq_s' name='cust_freq_s' type='text'/></td><td>Start frequency (not less then suported by the module)</td></tr>
+							<tr><td width="30"></td><td>End Freq</td><td><input size='3' id='cust_freq_e' name='cust_freq_e' type='text'/></td><td>End frequency (not less then suported by the module)</td></tr>
+						</table>
 @@end
 						<div class="mui-textfield">
 							<input size='3' id='wifi-on-interval' name='wifi-on-interval' type='text'/>

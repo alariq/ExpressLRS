@@ -223,6 +223,11 @@ void saveOptions(Stream &stream, bool customised)
     #endif
     doc["is-airport"] = firmwareOptions.is_airport;
     doc["domain"] = firmwareOptions.domain;
+    //sebi
+    doc["use_cust_freq"] = firmwareOptions.use_cust_freq;
+    doc["cust_freq_s"] = firmwareOptions.cust_freq_s;
+    doc["cust_freq_e"] = firmwareOptions.cust_freq_e;
+    //~
     doc["customised"] = customised;
     doc["flash-discriminator"] = flash_discriminator;
 
@@ -336,6 +341,11 @@ static void options_LoadFromFlashOrFile(EspFlashStream &strmFlash)
     firmwareOptions.lock_on_first_connection = doc["lock-on-first-connection"] | true;
     #endif
     firmwareOptions.domain = doc["domain"] | 0;
+    //sebi
+    firmwareOptions.use_cust_freq = doc["use_cust_freq"];
+    firmwareOptions.cust_freq_s = doc["cust_freq_s"];
+    firmwareOptions.cust_freq_e = doc["cust_freq_e"];
+    //~
     flash_discriminator = doc["flash-discriminator"] | 0U;
 
     builtinOptions.clear();

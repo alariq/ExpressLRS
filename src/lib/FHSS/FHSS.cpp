@@ -7,13 +7,17 @@
 #include "SX127xDriver.h"
 
 const fhss_config_t domains[] = {
-    {"UA970",  FREQ_HZ_TO_REG_VAL(960000000), FREQ_HZ_TO_REG_VAL(970000000), 8},
+
+    {"AU915",  FREQ_HZ_TO_REG_VAL(915500000), FREQ_HZ_TO_REG_VAL(926900000), 20},
     {"FCC915", FREQ_HZ_TO_REG_VAL(903500000), FREQ_HZ_TO_REG_VAL(926900000), 40},
     {"EU868",  FREQ_HZ_TO_REG_VAL(865275000), FREQ_HZ_TO_REG_VAL(869575000), 13},
-    {"UA800",  FREQ_HZ_TO_REG_VAL(790000000), FREQ_HZ_TO_REG_VAL(800000000), 8},
+    {"IN866",  FREQ_HZ_TO_REG_VAL(865375000), FREQ_HZ_TO_REG_VAL(866950000), 4},
     {"AU433",  FREQ_HZ_TO_REG_VAL(433420000), FREQ_HZ_TO_REG_VAL(434420000), 3},
     {"EU433",  FREQ_HZ_TO_REG_VAL(433100000), FREQ_HZ_TO_REG_VAL(434450000), 3}
 };
+//sebi: by default use FCC frequencies
+fhss_config_t cust_domain = {"CUSTOM", FREQ_HZ_TO_REG_VAL(903500000), FREQ_HZ_TO_REG_VAL(926900000), 40};
+
 #elif defined(RADIO_SX128X)
 #include "SX1280Driver.h"
 
@@ -59,8 +63,25 @@ Approach:
 void FHSSrandomiseFHSSsequence(const uint32_t seed)
 {
     FHSSconfig = &domains[firmwareOptions.domain];
+//sebi
+#if defined(RADIO_SX127X)
+    if(firmwareOptions.use_cust_freq) {
+        uint32_t fs = firmwareOptions.cust_freq_s;
+        uint32_t fe = firmwareOptions.cust_freq_e;
+        // SX127X chip max bw is 500kHz, use 0.585 as in FCC
+        uint32_t fcnt = (uint32_t)((fe - fs)/0.585f);
+
+        cust_domain.freq_start = FREQ_HZ_TO_REG_VAL(fs*1e6);
+        cust_domain.freq_stop = FREQ_HZ_TO_REG_VAL(fe*1e6);
+        cust_domain.freq_count = fcnt;
+
+        FHSSconfig = &cust_domain;
+    }
+#endif
+
     DBGLN("Setting %s Mode", FHSSconfig->domain);
     DBGLN("Number of FHSS frequencies = %u", FHSSconfig->freq_count);
+    DBGLN("Start freq. = %u Stop freq. = %u", FHSSconfig->freq_start, FHSSconfig->freq_stop);
 
     sync_channel = (FHSSconfig->freq_count / 2) + 1;
     DBGLN("Sync channel = %u", sync_channel);
