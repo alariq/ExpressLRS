@@ -1033,7 +1033,10 @@ static void HandleWebUpdate()
         #endif
         changeTime = now;
         WiFi.softAPConfig(ipAddress, ipAddress, netMsk);
-        WiFi.softAP(wifi_ap_ssid, wifi_ap_password);
+        //sebi
+        //WiFi.softAP(wifi_ap_ssid, wifi_ap_password);
+        WiFi.softAP(wifi_ap_ssid, wifi_ap_password, 1/*default channel*/, b_wifi_ssid_hide);
+        //~
         startServices();
         break;
       case WIFI_STA:

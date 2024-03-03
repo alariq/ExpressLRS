@@ -11,6 +11,7 @@ extern const char *wifi_hostname;
 extern const char *wifi_ap_ssid;
 extern const char *wifi_ap_password;
 extern const char *wifi_ap_address;
+extern const bool b_wifi_ssid_hide; // sebi
 
 enum BuzzerMode {
     buzzerQuiet,

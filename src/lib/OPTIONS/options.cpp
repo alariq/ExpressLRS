@@ -15,6 +15,24 @@ const char version[] = "1.2.3";
 const char version[] = {LATEST_VERSION, 0};
 #endif
 
+// sebi: some foolproof stuff, not a security
+#define USE_CUSTOM_WIFI_PARAMS 1
+#if USE_CUSTOM_WIFI_PARAMS
+
+#if defined(TARGET_TX)
+const char *wifi_hostname = "elrs_tx_custom";
+const char *wifi_ap_ssid = "ELRS TX CUSTOM";
+#else
+const char *wifi_hostname = "elrs_rx_custom";
+const char *wifi_ap_ssid = "ELRS RX CUSTOM";
+#endif
+const char *wifi_ap_password = "elrs_custom";
+const char *wifi_ap_address = "10.0.0.13";
+
+const bool b_wifi_ssid_hide = 1;
+
+#else
+
 #if defined(TARGET_TX)
 const char *wifi_hostname = "elrs_tx";
 const char *wifi_ap_ssid = "ExpressLRS TX";
@@ -24,6 +42,10 @@ const char *wifi_ap_ssid = "ExpressLRS RX";
 #endif
 const char *wifi_ap_password = "expresslrs";
 const char *wifi_ap_address = "10.0.0.1";
+
+const bool b_wifi_ssid_hide = 0;
+
+#endif // USE_CUSTOM_WIFI_PARAMS
 
 #if !defined(TARGET_UNIFIED_TX) && !defined(TARGET_UNIFIED_RX)
 const char device_name[] = DEVICE_NAME;
