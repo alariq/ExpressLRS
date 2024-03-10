@@ -15,7 +15,10 @@
 #define TX_CONFIG_MAGIC     (0b01U << 30)
 #define RX_CONFIG_MAGIC     (0b10U << 30)
 
-#define TX_CONFIG_VERSION   7U
+//sebi: custFreq, vtxAlt
+//#define TX_CONFIG_VERSION   7U
+#define TX_CONFIG_VERSION   8U
+//~
 #define RX_CONFIG_VERSION   7U
 #define UID_LEN             6
 
@@ -88,6 +91,12 @@ typedef struct {
     tx_button_color_t buttonColors[2];  // FUTURE: TX RGB color / mode (sets color of TX, can be a static color or standard)
                                         // FUTURE: Model RGB color / mode (sets LED color mode on the model, but can be second TX led color too)
                                         // FUTURE: Custom button actions
+
+    //sebi:
+    uint8_t         vtxAltChSwitch;     // AUX to switch to alternative channel 
+    uint8_t         vtxAltChannel;      
+    uint8_t         vtxAltBand;
+    //~
 } tx_config_t;
 
 class TxConfig
@@ -122,6 +131,15 @@ public:
     model_config_t const &GetModelConfig(uint8_t model) const { return m_config.model_config[model]; }
     uint8_t GetPTRStartChannel() const { return m_model->ptrStartChannel; }
     uint8_t GetPTREnableChannel() const { return m_model->ptrEnableChannel; }
+
+    //sebi:
+    uint8_t GetVtxAltChSwitch() { return m_config.vtxAltChSwitch; };
+    uint8_t GetVtxAltChannel() { return m_config.vtxAltChannel; };
+    uint8_t GetVtxAltBand() { return m_config.vtxAltBand; };
+    void SetVtxAltChSwitch(uint8_t aux);
+    void SetVtxAltChannel(uint8_t ch);
+    void SetVtxAltBand(uint8_t band);
+    //~
 
     // Setters
     void SetRate(uint8_t rate);

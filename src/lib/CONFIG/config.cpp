@@ -181,6 +181,17 @@ void TxConfig::Load()
             m_config.backpackDisable = value8;
     }
 
+    // sebi:
+    if (version >= 8)
+    {
+        if (nvs_get_u32(handle, "vtx_alt", &value) == ESP_OK)
+        {
+            m_config.vtxAltChSwitch = value >> 24;
+            m_config.vtxAltChannel = value >> 16;
+            m_config.vtxAltBand = value >> 8;
+        }
+    }
+    //~
     for(unsigned i=0; i<64; i++)
     {
         char model[10] = "model";
@@ -321,6 +332,14 @@ TxConfig::Commit()
             m_config.vtxPower << 8 |
             m_config.vtxPitmode;
         nvs_set_u32(handle, "vtx", value);
+
+        //sebi:
+        uint32_t value2 = 
+            m_config.vtxAltChSwitch << 24 |
+            m_config.vtxAltChannel << 16 |
+            m_config.vtxAltBand << 8;
+        nvs_set_u32(handle, "vtx_alt", value2);
+        //~
     }
     if (m_modified & FAN_CHANGED)
     {
@@ -582,6 +601,32 @@ TxConfig::SetPTREnableChannel(uint8_t ptrEnableChannel)
         m_modified |= MODEL_CHANGED;
     }
 }
+
+//sebi:
+
+void TxConfig::SetVtxAltChSwitch(uint8_t aux)
+{
+    if (m_config.vtxAltChSwitch != aux) {
+        m_config.vtxAltChSwitch = aux;
+        m_modified |= VTX_CHANGED;
+    }
+}
+void TxConfig::SetVtxAltChannel(uint8_t ch)
+{
+    if (m_config.vtxAltChannel!= ch) {
+        m_config.vtxAltChannel = ch;
+        m_modified |= VTX_CHANGED;
+    }
+}
+
+void TxConfig::SetVtxAltBand(uint8_t band)
+{
+    if (m_config.vtxAltBand!= band) {
+        m_config.vtxAltBand = band;
+        m_modified |= VTX_CHANGED;
+    }
+}
+//~
 
 void
 TxConfig::SetDefaults(bool commit)
