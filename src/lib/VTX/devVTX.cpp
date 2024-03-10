@@ -20,6 +20,9 @@
 extern Stream *TxBackpack;
 static uint8_t pitmodeAuxState = 0;
 static bool sendEepromWrite = true;
+//sebi:
+static uint8_t vtxAltChannelActive = 0;
+//~
 
 static enum VtxSendState_e
 {
@@ -53,6 +56,27 @@ void VtxPitmodeSwitchUpdate()
         VtxTriggerSend();
     }
 }
+//sebi:
+void VtxAltChSwitchUpdate()
+{
+    bool off = !config.GetVtxAltChSwitch() || !config.GetVtxAltBand();
+    if(false == vtxAltChannelActive && off)
+    {
+        return;
+    }
+
+    uint8_t auxNumber = config.GetVtxAltChSwitch() + 3;
+    uint8_t currentAltChAuxState = (!off) && CRSF_to_BIT(ChannelData[auxNumber]);
+
+    if (vtxAltChannelActive != currentAltChAuxState)
+    {
+        DBGLN("Trigger switch %s alt state", currentAltChAuxState? "to" : "from");
+        vtxAltChannelActive = currentAltChAuxState;
+        sendEepromWrite = false;
+        VtxTriggerSend();
+    }
+}
+//~
 
 static void eepromWriteToMSPOut()
 {
@@ -66,7 +90,12 @@ static void eepromWriteToMSPOut()
 static void VtxConfigToMSPOut()
 {
     DBGLN("Sending VtxConfig");
-    uint8_t vtxIdx = (config.GetVtxBand()-1) * 8 + config.GetVtxChannel();
+    //sebi:
+    //uint8_t vtxIdx = (config.GetVtxBand()-1) * 8 + config.GetVtxChannel();
+    uint8_t def = (config.GetVtxBand()-1) * 8 + config.GetVtxChannel();
+    uint8_t alt = (config.GetVtxAltBand()-1) * 8 + config.GetVtxAltChannel();
+    uint8_t vtxIdx = vtxAltChannelActive ? alt : def;
+    //~
 
     mspPacket_t packet;
     packet.reset();

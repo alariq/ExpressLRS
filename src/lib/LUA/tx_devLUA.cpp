@@ -18,7 +18,10 @@ extern char backpackVersion[];
 
 static char version_domain[20+1+6+1];
 char pwrFolderDynamicName[] = "TX Power (1000 Dynamic)";
-char vtxFolderDynamicName[] = "VTX Admin (OFF:C:1 Aux11 )";
+//sebi:
+//char vtxFolderDynamicName[] = "VTX Admin (OFF:C:1 Aux11 )";
+char vtxFolderDynamicName[] = "VTX Admin (OFF:C:1 Aux11 Alt:OFF:C:1 Aux11)";
+//~
 static char modelMatchUnit[] = " (ID: 00)";
 static char tlmBandwidth[] = " (xxxxxbps)";
 static const char folderNameSeparator[2] = {' ',':'};
@@ -30,6 +33,8 @@ static const char luastrDvrDelay[] = "0s;5s;15s;30s;45s;1min;2min";
 static const char luastrHeadTrackingEnable[] = "Off;On;" STR_LUA_ALLAUX_UPDOWN;
 static const char luastrHeadTrackingStart[] = STR_LUA_ALLAUX;
 static const char luastrOffOn[] = "Off;On";
+static const char luastrVtxAltChSwitch[] = "Off;" STR_LUA_ALLAUX; // sebi:
+static const char luastrDisabled[] = "Disabled";
 
 #define HAS_RADIO (GPIO_PIN_SCK != UNDEF_PIN)
 
@@ -265,8 +270,33 @@ static struct luaItem_selection luaBackpackTelemetry = {
 static struct luaItem_string luaBackpackVersion = {
     {"Version", CRSF_INFO},
     backpackVersion};
-
 //---------------------------- BACKPACK ------------------
+
+//sebi:
+
+
+//---------------------------- VTX ALT CH ------------------
+static struct luaItem_selection luaVtxAltChSwitch = {
+    {"VtxSecondary", CRSF_TEXT_SELECTION},
+    0, // value
+    luastrVtxAltChSwitch,
+    STR_EMPTYSPACE};
+
+static struct luaItem_selection luaVtxAltBand = {
+    {"AltBand", CRSF_TEXT_SELECTION},
+    0, // value
+    "Off;A;B;E;F;R;L",
+    STR_EMPTYSPACE
+};
+
+static struct luaItem_selection luaVtxAltChannel = {
+    {"AltChannel", CRSF_TEXT_SELECTION},
+    0, // value
+    "1;2;3;4;5;6;7;8",
+    STR_EMPTYSPACE
+};
+
+//~
 
 static char luaBadGoodString[10];
 static int event();
@@ -348,6 +378,8 @@ static void luadevUpdateBackpackOpts()
     LUA_FIELD_HIDE(luaHeadTrackingStartChannel);
     LUA_FIELD_HIDE(luaBackpackTelemetry);
     LUA_FIELD_HIDE(luaBackpackVersion);
+    LUA_FIELD_HIDE(luaVtxAltChSwitch);
+    
   }
   else
   {
@@ -358,6 +390,7 @@ static void luadevUpdateBackpackOpts()
     LUA_FIELD_SHOW(luaHeadTrackingStartChannel);
     LUA_FIELD_SHOW(luaBackpackTelemetry);
     LUA_FIELD_SHOW(luaBackpackVersion);
+    LUA_FIELD_SHOW(luaVtxAltChSwitch);
   }
 }
 
@@ -517,6 +550,23 @@ static void updateFolderName_VtxAdmin()
         }
       }
     }
+
+    //sebi:
+    const uint8_t alt_switch = config.GetVtxAltChSwitch();
+    if(config.GetVtxAltBand() && alt_switch) {
+      strcpy(&vtxFolderDynamicName[vtxFolderLabelOffset], " Alt ");
+      vtxFolderLabelOffset+= strlen(" Alt ");
+      // alt band
+      vtxFolderLabelOffset += findLuaSelectionLabel(&luaVtxAltBand, &vtxFolderDynamicName[vtxFolderLabelOffset], config.GetVtxAltBand());
+      vtxFolderDynamicName[vtxFolderLabelOffset++] = folderNameSeparator[1];
+      // alt channel 
+      vtxFolderLabelOffset += findLuaSelectionLabel(&luaVtxAltChannel, &vtxFolderDynamicName[vtxFolderLabelOffset], config.GetVtxAltChannel());
+
+      vtxFolderDynamicName[vtxFolderLabelOffset++] = folderNameSeparator[1];
+      vtxFolderLabelOffset += findLuaSelectionLabel(&luaVtxAltChSwitch, &vtxFolderDynamicName[vtxFolderLabelOffset], alt_switch);
+    }
+    //~
+
     vtxFolderDynamicName[vtxFolderLabelOffset++] = ')';
     vtxFolderDynamicName[vtxFolderLabelOffset] = '\0';
   }
@@ -686,6 +736,17 @@ static void registerLuaParameters()
       config.SetVtxPitmode(arg);
     }, luaVtxFolder.common.id);
     registerLUAParameter(&luaVtxSend, &luahandSimpleSendCmd, luaVtxFolder.common.id);
+    //sebi:
+    registerLUAParameter(&luaVtxAltChSwitch, [](luaPropertiesCommon *item, uint8_t arg) {
+      config.SetVtxAltChSwitch(arg);
+    }, luaVtxFolder.common.id);
+    registerLUAParameter(&luaVtxAltBand, [](struct luaPropertiesCommon *item, uint8_t arg) {
+      config.SetVtxAltBand(arg);
+    }, luaVtxFolder.common.id);
+    registerLUAParameter(&luaVtxAltChannel, [](struct luaPropertiesCommon *item, uint8_t arg) {
+      config.SetVtxAltChannel(arg);
+    }, luaVtxFolder.common.id);
+    //~
   }
 
   // WIFI folder
@@ -798,6 +859,12 @@ static int event()
 
   uint8_t dynamic = config.GetDynamicPower() ? config.GetBoostChannel() + 1 : 0;
   setLuaTextSelectionValue(&luaDynamicPower, dynamic);
+
+  //sebi:
+  setLuaTextSelectionValue(&luaVtxAltBand, config.GetVtxAltBand());
+  setLuaTextSelectionValue(&luaVtxAltChannel, config.GetVtxAltChannel());
+  setLuaTextSelectionValue(&luaVtxAltChSwitch, config.GetVtxAltChSwitch());
+  //~
 
   setLuaTextSelectionValue(&luaVtxBand, config.GetVtxBand());
   setLuaUint8Value(&luaVtxChannel, config.GetVtxChannel() + 1);
