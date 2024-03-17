@@ -117,8 +117,10 @@ static void VtxConfigToMSPOut()
     }
 
     CRSF::AddMspMessage(&packet);
-
+//sebi: allow
+#if 0
     if (!CRSF::IsArmed()) // Do not send while armed.  There is no need to change the video frequency while armed.  It can also cause VRx modules to flash up their OSD menu e.g. Rapidfire.
+#endif
     {
         MSP::sendPacket(&packet, TxBackpack); // send to tx-backpack as MSP
     }
