@@ -83,6 +83,7 @@ void FHSSrandomiseFHSSsequence(const uint32_t seed)
         cust_domain.freq_count = fcnt;
 
         FHSSconfig = &cust_domain;
+        DBGLN("Custom freq. %u - %u", fs, fe);
     }
 #endif
 
