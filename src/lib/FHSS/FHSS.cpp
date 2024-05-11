@@ -111,6 +111,7 @@ void FHSSrandomiseFHSSsequence(const uint32_t seed)
 
     DBGLN("Setting %s Mode", FHSSconfig->domain);
     DBGLN("Number of FHSS frequencies = %u", FHSSconfig->freq_count);
+    DBGLN("Start freq. = %u Stop freq. = %u", FHSSconfig->freq_start, FHSSconfig->freq_stop);
     DBGLN("Sync channel = %u", sync_channel);
 
     FHSSrandomiseFHSSsequenceBuild(seed, FHSSconfig->freq_count, sync_channel, FHSSsequence);
