@@ -22,7 +22,8 @@ extern Stream *TxBackpack;
 static uint8_t pitmodeAuxState = 0;
 static bool sendEepromWrite = true;
 //sebi:
-static uint8_t vtxAltChannelActive = 0;
+// if < 0 means alt channel is not active, so use default
+static int8_t vtxAltChannelIndex = -1;
 //~
 
 static enum VtxSendState_e
@@ -60,19 +61,23 @@ void VtxPitmodeSwitchUpdate()
 //sebi:
 void VtxAltChSwitchUpdate()
 {
-    bool off = !config.GetVtxAltChSwitch() || !config.GetVtxAltBand();
-    if(false == vtxAltChannelActive && off)
-    {
+    // if channel swith is not set or no bands setup, then not bother to check for switch value
+    bool off = !config.GetVtxAltChSwitch() || !config.GetVtxAltBand(0);
+    if(off) {
         return;
     }
 
     uint8_t auxNumber = config.GetVtxAltChSwitch() + 3;
-    uint8_t currentAltChAuxState = (!off) && CRSF_to_BIT(ChannelData[auxNumber]);
+    // if not off and channel > mid value
+    // num alternative channels + 1 standard default
+    int8_t currentAltChAuxState = CRSF_to_N(ChannelData[auxNumber], NUM_ALT_VTX_CHANNELS + 1);
+    // if zero means use standard vtx channel
+    currentAltChAuxState = currentAltChAuxState - 1;
 
-    if (vtxAltChannelActive != currentAltChAuxState)
+    if (vtxAltChannelIndex != currentAltChAuxState)
     {
         DBGLN("Trigger switch %s alt state", currentAltChAuxState? "to" : "from");
-        vtxAltChannelActive = currentAltChAuxState;
+        vtxAltChannelIndex = currentAltChAuxState;
         sendEepromWrite = false;
         VtxTriggerSend();
     }
@@ -90,12 +95,13 @@ static void eepromWriteToMSPOut()
 
 static void VtxConfigToMSPOut()
 {
-    DBGLN("Sending VtxConfig");
+    DBGLN("Sending VtxConfig, altVtxChIndex: %d", vtxAltChannelIndex);
     //sebi:
-    //uint8_t vtxIdx = (config.GetVtxBand()-1) * 8 + config.GetVtxChannel();
-    uint8_t def = (config.GetVtxBand()-1) * 8 + config.GetVtxChannel();
-    uint8_t alt = (config.GetVtxAltBand()-1) * 8 + config.GetVtxAltChannel();
-    uint8_t vtxIdx = vtxAltChannelActive ? alt : def;
+    uint8_t vtxIdx = (config.GetVtxBand()-1) * 8 + config.GetVtxChannel();
+    // should be never more than NUM_ALT_VTX_CHANNELS, but just in case...
+    const bool b_alt_band_ok = 
+        vtxAltChannelIndex >= 0 && vtxAltChannelIndex < NUM_ALT_VTX_CHANNELS && config.GetVtxAltBand(vtxAltChannelIndex)!=0;
+    vtxIdx = b_alt_band_ok ? (config.GetVtxAltBand(vtxAltChannelIndex) - 1) * 8 + config.GetVtxAltChannel(vtxAltChannelIndex) : vtxIdx;
     //~
 
     mspPacket_t packet;

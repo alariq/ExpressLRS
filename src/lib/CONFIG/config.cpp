@@ -184,11 +184,28 @@ void TxConfig::Load()
     // sebi:
     if (version >= 8)
     {
-        if (nvs_get_u32(handle, "vtx_alt", &value) == ESP_OK)
+        uint8_t v8;
+        if (nvs_get_u8(handle, "vtx_alt_ch", &v8) == ESP_OK)
         {
-            m_config.vtxAltChSwitch = value >> 24;
-            m_config.vtxAltChannel = value >> 16;
-            m_config.vtxAltBand = value >> 8;
+            m_config.vtxAltChSwitch = v8;
+            // note: array len is bigger than string to account for index
+            char vtxSwPrefix[32] = "vtx_alt_ch_val";
+            const int prefLen = strlen(vtxSwPrefix);
+            for(int i=0;i<NUM_ALT_VTX_CHANNELS;++i) {
+                itoa(i, vtxSwPrefix + prefLen, 10);
+                uint32_t v32;
+                DBGLN("reading %s", vtxSwPrefix);
+                if (nvs_get_u32(handle, vtxSwPrefix, &v32) == ESP_OK) {
+                    m_config.vtxSwData[i].raw = v32;
+                    DBGLN("got b:%d ch:%d v:%d", m_config.vtxSwData[i].v.band, m_config.vtxSwData[i].v.ch, 
+                        m_config.vtxSwData[i].v.val);
+                }
+            }
+        } else {
+            m_config.vtxAltChSwitch = 0;
+            for(int i=0;i<NUM_ALT_VTX_CHANNELS;++i) {
+                m_config.vtxSwData[i].raw = 0;
+            }
         }
     }
     //~
@@ -334,11 +351,14 @@ TxConfig::Commit()
         nvs_set_u32(handle, "vtx", value);
 
         //sebi:
-        uint32_t value2 = 
-            m_config.vtxAltChSwitch << 24 |
-            m_config.vtxAltChannel << 16 |
-            m_config.vtxAltBand << 8;
-        nvs_set_u32(handle, "vtx_alt", value2);
+        nvs_set_u8(handle, "vtx_alt_ch", m_config.vtxAltChSwitch);
+        // note: array len is bigger than string to account for index
+        char vtxSwPrefix[32] = "vtx_alt_ch_val";
+        const int prefLen = strlen(vtxSwPrefix);
+        for (int i = 0; i < NUM_ALT_VTX_CHANNELS; ++i) {
+            itoa(i, vtxSwPrefix + prefLen, 10);
+            nvs_set_u32(handle, vtxSwPrefix, m_config.vtxSwData[i].raw);
+        }
         //~
     }
     if (m_modified & FAN_CHANGED)
@@ -611,18 +631,18 @@ void TxConfig::SetVtxAltChSwitch(uint8_t aux)
         m_modified |= VTX_CHANGED;
     }
 }
-void TxConfig::SetVtxAltChannel(uint8_t ch)
+void TxConfig::SetVtxAltChannel(int idx, uint8_t ch)
 {
-    if (m_config.vtxAltChannel!= ch) {
-        m_config.vtxAltChannel = ch;
+    if (m_config.vtxSwData[idx].v.ch != ch) {
+        m_config.vtxSwData[idx].v.ch = ch;
         m_modified |= VTX_CHANGED;
     }
 }
 
-void TxConfig::SetVtxAltBand(uint8_t band)
+void TxConfig::SetVtxAltBand(int idx, uint8_t band)
 {
-    if (m_config.vtxAltBand!= band) {
-        m_config.vtxAltBand = band;
+    if (m_config.vtxSwData[idx].v.band != band) {
+        m_config.vtxSwData[idx].v.band = band;
         m_modified |= VTX_CHANGED;
     }
 }

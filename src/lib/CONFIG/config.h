@@ -73,6 +73,18 @@ typedef union {
     uint32_t raw;
 } tx_button_color_t;
 
+//sebi:
+#define NUM_ALT_VTX_CHANNELS 4
+typedef union {
+    struct {
+        uint16_t val;
+        uint8_t band;
+        uint8_t ch;
+    } v;
+    uint32_t raw;
+} vtx_ch_switch_data_t;
+//~
+
 typedef struct {
     uint32_t        version;
     uint8_t         vtxBand;    // 0=Off, else band number
@@ -93,9 +105,8 @@ typedef struct {
                                         // FUTURE: Custom button actions
 
     //sebi:
-    uint8_t         vtxAltChSwitch;     // AUX to switch to alternative channel 
-    uint8_t         vtxAltChannel;      
-    uint8_t         vtxAltBand;
+    uint8_t         vtxAltChSwitch;     // AUX to switch to alternative channel
+    vtx_ch_switch_data_t vtxSwData[NUM_ALT_VTX_CHANNELS];
     //~
 } tx_config_t;
 
@@ -134,11 +145,11 @@ public:
 
     //sebi:
     uint8_t GetVtxAltChSwitch() { return m_config.vtxAltChSwitch; };
-    uint8_t GetVtxAltChannel() { return m_config.vtxAltChannel; };
-    uint8_t GetVtxAltBand() { return m_config.vtxAltBand; };
+    uint8_t GetVtxAltChannel(int idx) { return m_config.vtxSwData[idx].v.ch; };
+    uint8_t GetVtxAltBand(int idx) { return m_config.vtxSwData[idx].v.band; };
     void SetVtxAltChSwitch(uint8_t aux);
-    void SetVtxAltChannel(uint8_t ch);
-    void SetVtxAltBand(uint8_t band);
+    void SetVtxAltChannel(int idx, uint8_t ch);
+    void SetVtxAltBand(int idx, uint8_t band);
     //~
 
     // Setters

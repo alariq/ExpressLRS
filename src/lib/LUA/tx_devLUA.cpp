@@ -266,8 +266,6 @@ static struct luaItem_string luaBackpackVersion = {
 //---------------------------- BACKPACK ------------------
 
 //sebi:
-
-
 //---------------------------- VTX ALT CH ------------------
 static struct luaItem_selection luaVtxAltChSwitch = {
     {"VtxSecondary", CRSF_TEXT_SELECTION},
@@ -275,19 +273,65 @@ static struct luaItem_selection luaVtxAltChSwitch = {
     luastrVtxAltChSwitch,
     STR_EMPTYSPACE};
 
-static struct luaItem_selection luaVtxAltBand = {
-    {"AltBand", CRSF_TEXT_SELECTION},
+static struct luaItem_selection luaVtxAltBand0 = {
+    {"AltBand0", CRSF_TEXT_SELECTION},
     0, // value
     "Off;A;B;E;F;R;L",
     STR_EMPTYSPACE
 };
 
-static struct luaItem_selection luaVtxAltChannel = {
-    {"AltChannel", CRSF_TEXT_SELECTION},
+static struct luaItem_selection luaVtxAltCh0 = {
+    {"AltCh0", CRSF_TEXT_SELECTION},
     0, // value
     "1;2;3;4;5;6;7;8",
     STR_EMPTYSPACE
 };
+
+static struct luaItem_selection luaVtxAltBand1 = {
+    {"AltBand1", CRSF_TEXT_SELECTION},
+    0, // value
+    "Off;A;B;E;F;R;L",
+    STR_EMPTYSPACE
+};
+
+static struct luaItem_selection luaVtxAltCh1 = {
+    {"AltCh1", CRSF_TEXT_SELECTION},
+    0, // value
+    "1;2;3;4;5;6;7;8",
+    STR_EMPTYSPACE
+};
+
+static struct luaItem_selection luaVtxAltBand2 = {
+    {"AltBand2", CRSF_TEXT_SELECTION},
+    0, // value
+    "Off;A;B;E;F;R;L",
+    STR_EMPTYSPACE
+};
+
+static struct luaItem_selection luaVtxAltCh2 = {
+    {"AltCh2", CRSF_TEXT_SELECTION},
+    0, // value
+    "1;2;3;4;5;6;7;8",
+    STR_EMPTYSPACE
+};
+
+static struct luaItem_selection luaVtxAltBand3 = {
+    {"AltBand3", CRSF_TEXT_SELECTION},
+    0, // value
+    "Off;A;B;E;F;R;L",
+    STR_EMPTYSPACE
+};
+
+static struct luaItem_selection luaVtxAltCh3 = {
+    {"AltCh3", CRSF_TEXT_SELECTION},
+    0, // value
+    "1;2;3;4;5;6;7;8",
+    STR_EMPTYSPACE
+};
+
+struct luaItem_selection* luaVtxAltChannels[] = {&luaVtxAltCh0, &luaVtxAltCh1, &luaVtxAltCh2, &luaVtxAltCh3 };
+struct luaItem_selection* luaVtxAltBands[] = {&luaVtxAltBand0, &luaVtxAltBand1, &luaVtxAltBand2, &luaVtxAltBand3 };
+static_assert(sizeof(luaVtxAltChannels) == sizeof(luaVtxAltChannels) && sizeof(luaVtxAltChannels)/sizeof(luaVtxAltChannels[0]) == NUM_ALT_VTX_CHANNELS);
 
 //~
 
@@ -541,14 +585,14 @@ static void updateFolderName_VtxAdmin()
 
     //sebi:
     const uint8_t alt_switch = config.GetVtxAltChSwitch();
-    if(config.GetVtxAltBand() && alt_switch) {
+    if(config.GetVtxAltBand(0) && alt_switch) {
       strcpy(&vtxFolderDynamicName[vtxFolderLabelOffset], " Alt ");
       vtxFolderLabelOffset+= strlen(" Alt ");
       // alt band
-      vtxFolderLabelOffset += findLuaSelectionLabel(&luaVtxAltBand, &vtxFolderDynamicName[vtxFolderLabelOffset], config.GetVtxAltBand());
+      vtxFolderLabelOffset += findLuaSelectionLabel(&luaVtxAltBand0, &vtxFolderDynamicName[vtxFolderLabelOffset], config.GetVtxAltBand(0));
       vtxFolderDynamicName[vtxFolderLabelOffset++] = folderNameSeparator[1];
       // alt channel 
-      vtxFolderLabelOffset += findLuaSelectionLabel(&luaVtxAltChannel, &vtxFolderDynamicName[vtxFolderLabelOffset], config.GetVtxAltChannel());
+      vtxFolderLabelOffset += findLuaSelectionLabel(&luaVtxAltCh0, &vtxFolderDynamicName[vtxFolderLabelOffset], config.GetVtxAltChannel(0));
 
       vtxFolderDynamicName[vtxFolderLabelOffset++] = folderNameSeparator[1];
       vtxFolderLabelOffset += findLuaSelectionLabel(&luaVtxAltChSwitch, &vtxFolderDynamicName[vtxFolderLabelOffset], alt_switch);
@@ -728,12 +772,27 @@ static void registerLuaParameters()
     registerLUAParameter(&luaVtxAltChSwitch, [](luaPropertiesCommon *item, uint8_t arg) {
       config.SetVtxAltChSwitch(arg);
     }, luaVtxFolder.common.id);
-    registerLUAParameter(&luaVtxAltBand, [](struct luaPropertiesCommon *item, uint8_t arg) {
-      config.SetVtxAltBand(arg);
-    }, luaVtxFolder.common.id);
-    registerLUAParameter(&luaVtxAltChannel, [](struct luaPropertiesCommon *item, uint8_t arg) {
-      config.SetVtxAltChannel(arg);
-    }, luaVtxFolder.common.id);
+
+    registerLUAParameter(&luaVtxAltBand0, [](struct luaPropertiesCommon *item, uint8_t arg) { 
+      config.SetVtxAltBand(0, arg); }, luaVtxFolder.common.id);
+    registerLUAParameter(&luaVtxAltCh0, [](struct luaPropertiesCommon *item, uint8_t arg) {
+      config.SetVtxAltChannel(0, arg); }, luaVtxFolder.common.id);
+
+    registerLUAParameter(&luaVtxAltBand1, [](struct luaPropertiesCommon *item, uint8_t arg) { 
+      config.SetVtxAltBand(1, arg); }, luaVtxFolder.common.id);
+    registerLUAParameter(&luaVtxAltCh1, [](struct luaPropertiesCommon *item, uint8_t arg) {
+      config.SetVtxAltChannel(1, arg); }, luaVtxFolder.common.id);
+
+    registerLUAParameter(&luaVtxAltBand2, [](struct luaPropertiesCommon *item, uint8_t arg) { 
+      config.SetVtxAltBand(2, arg); }, luaVtxFolder.common.id);
+    registerLUAParameter(&luaVtxAltCh2, [](struct luaPropertiesCommon *item, uint8_t arg) {
+      config.SetVtxAltChannel(2, arg); }, luaVtxFolder.common.id);
+
+    registerLUAParameter(&luaVtxAltBand3, [](struct luaPropertiesCommon *item, uint8_t arg) { 
+      config.SetVtxAltBand(3, arg); }, luaVtxFolder.common.id);
+    registerLUAParameter(&luaVtxAltCh3, [](struct luaPropertiesCommon *item, uint8_t arg) {
+      config.SetVtxAltChannel(3, arg); }, luaVtxFolder.common.id);
+
     //~
   }
 
@@ -846,9 +905,11 @@ static int event()
   setLuaTextSelectionValue(&luaDynamicPower, dynamic);
 
   //sebi:
-  setLuaTextSelectionValue(&luaVtxAltBand, config.GetVtxAltBand());
-  setLuaTextSelectionValue(&luaVtxAltChannel, config.GetVtxAltChannel());
   setLuaTextSelectionValue(&luaVtxAltChSwitch, config.GetVtxAltChSwitch());
+  for(int i=0; i<NUM_ALT_VTX_CHANNELS; ++i) {
+    setLuaTextSelectionValue(luaVtxAltBands[i], config.GetVtxAltBand(i));
+    setLuaTextSelectionValue(luaVtxAltChannels[i], config.GetVtxAltChannel(i));
+  }
   //~
 
   setLuaTextSelectionValue(&luaVtxBand, config.GetVtxBand());
