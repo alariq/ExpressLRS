@@ -4,6 +4,8 @@ import argparse
 import json
 import struct
 import sys
+import os.path
+import shutil
 
 from external import jmespath
 
@@ -94,6 +96,8 @@ def doConfiguration(file, defines, config, moduletype, frequency, platform, devi
 
     lua_name = lua_name if device_name is None else device_name
     appendToFirmware(file, product_name, lua_name, defines, config, layout)
+    #sebi:
+    return product_name
 
 def appendConfiguration(source, target, env):
     target_name = env.get('PIOENV', '').upper()
@@ -115,8 +119,21 @@ def appendConfiguration(source, target, env):
 
     defines = json.JSONEncoder().encode(env['OPTIONS_JSON'])
 
+    #sebi:
+    product_name = None
+
     with open(str(target[0]), "r+b") as firmware_file:
-        doConfiguration(firmware_file, defines, config, moduletype, frequency, platform, device_name)
+        product_name = doConfiguration(firmware_file, defines, config, moduletype, frequency, platform, device_name)
+
+    # sebi:
+    if product_name is not None:
+        out_fname = product_name
+        out_fname = product_name.replace(" ", "_")
+        out_fname = out_fname + ".bin"
+        out_path = os.path.join(os.path.dirname(str(target[0])), out_fname)
+        print(f"Target filename: {str(target[0])} -> {out_path}")
+        shutil.copy2(str(target[0]), out_path)
+
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description="Configure Unified Firmware")
