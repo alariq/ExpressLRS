@@ -258,10 +258,10 @@ function init() {
     //alert("Hi");
     if(_('use_cust_freq').checked) {
       _('cust_freq_table').style.display = 'block';
-      _('reg_domain_select').style.display = 'none';
+      _('reg_domain_select_sebi').style.display = 'none';
     } else {
       _('cust_freq_table').style.display = 'none';
-      _('reg_domain_select').style.display = 'block';
+      _('reg_domain_select_sebi').style.display = 'block';
     }
   };
   // onchange is called when options are loaded
@@ -367,7 +367,7 @@ function updateConfig(data, options) {
   originalUIDType = data.uidtype;
   updateUIDType(data.uidtype);
 
-  if (options.use_cust_freq) _('domain_override').textContent = "overriden"; //sebi:
+  if (options.use_cust_freq) _('domain_override_sebi').textContent = "overriden"; // sebi
 
   if (data.mode==='STA') {
     _('stamode').style.display = 'block';

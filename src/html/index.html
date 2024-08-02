@@ -15,7 +15,7 @@
 		<h1><b>ExpressLRS</b></h1>
 		<h2><b>Ця прошивка модифікована військовим для військових і розповсюджується безкоштовно. Питання та пропозиції: 94df6040915a6a1e3e7485ebedd34710@proton.me</b></h2>
 		<span id="product_name"></span><br/>
-		<b>Firmware Rev. </b>@@{VERSION} <span id="reg_domain"></span> <span id="domain_override"></span>
+		<b>Firmware Rev. </b>@@{VERSION} <span id="reg_domain"></span> <span id="domain_override_sebi"></span>
 	</header>
 	<br/>
 	<div class="mui-container-fluid">
@@ -55,7 +55,7 @@
 					<form id='upload_options' method='POST' action="/options">
 @@end
 @@if hasSubGHz:
-						<div class="mui-select" id="reg_domain_select">
+						<div class="mui-select" id="reg_domain_select_sebi">
 							<select id='domain' name='domain'>
 								<option value='0'>AU915</option>
 								<option value='1'>FCC915</option>
