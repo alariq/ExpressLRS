@@ -87,8 +87,7 @@ void FHSSrandomiseFHSSsequence(const uint32_t seed)
 {
     FHSSconfig = &domains[firmwareOptions.domain];
 
-//sebi
-#if defined(RADIO_SX127X)
+#if defined(RADIO_SX127X) || defined(RADIO_LR1121) 
     if(firmwareOptions.use_cust_freq) {
         uint32_t fs = firmwareOptions.cust_freq_s;
         uint32_t fe = firmwareOptions.cust_freq_e;
