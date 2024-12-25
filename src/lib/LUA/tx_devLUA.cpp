@@ -312,7 +312,7 @@ static struct luaItem_selection luaVtxAltChSwitch = {
 static struct luaItem_selection luaVtxAltBand0 = {
     {"AltBand0", CRSF_TEXT_SELECTION},
     0, // value
-    "Off;A;B;E;F;R;L",
+    "Off;A;B;E;F;R;L;X",
     STR_EMPTYSPACE
 };
 
@@ -326,7 +326,7 @@ static struct luaItem_selection luaVtxAltCh0 = {
 static struct luaItem_selection luaVtxAltBand1 = {
     {"AltBand1", CRSF_TEXT_SELECTION},
     0, // value
-    "Off;A;B;E;F;R;L",
+    "Off;A;B;E;F;R;L;X",
     STR_EMPTYSPACE
 };
 
@@ -340,7 +340,7 @@ static struct luaItem_selection luaVtxAltCh1 = {
 static struct luaItem_selection luaVtxAltBand2 = {
     {"AltBand2", CRSF_TEXT_SELECTION},
     0, // value
-    "Off;A;B;E;F;R;L",
+    "Off;A;B;E;F;R;L;X",
     STR_EMPTYSPACE
 };
 
@@ -354,7 +354,7 @@ static struct luaItem_selection luaVtxAltCh2 = {
 static struct luaItem_selection luaVtxAltBand3 = {
     {"AltBand3", CRSF_TEXT_SELECTION},
     0, // value
-    "Off;A;B;E;F;R;L",
+    "Off;A;B;E;F;R;L;X",
     STR_EMPTYSPACE
 };
 

@@ -2,10 +2,16 @@
 
 #include "stdint.h"
 
+#define SEBI_WITH_X_BAND
+
 #define BAND_NAME_LENGTH                8
 #define IS_FACTORY_BAND                 1
 #define CHANNEL_COUNT                   8
+#if defined(SEBI_WITH_X_BAND)
+#define FREQ_TABLE_SIZE (48 + 8)
+#else
 #define FREQ_TABLE_SIZE 48
+#endif
 
 #define RACE_MODE                       2
 #define RACE_MODE_POWER                 14 // dBm
@@ -19,6 +25,9 @@ const uint8_t channelFreqLabel[FREQ_TABLE_SIZE] = {
     'F', 'A', 'T', 'S', 'H', 'A', 'R', 'K', // F
     'R', 'A', 'C', 'E', ' ', ' ', ' ', ' ', // R
     'R', 'A', 'C', 'E', '_', 'L', 'O', 'W', // L
+#if defined(SEBI_WITH_X_BAND)
+    'X', '_', 'B', 'A', 'N', 'D', ' ', ' ', // X
+#endif
 };
 
 const uint8_t bandLetter[6] = {'A', 'B', 'E', 'F', 'R', 'L'};
@@ -29,7 +38,10 @@ const uint16_t channelFreqTable[FREQ_TABLE_SIZE] = {
     5705, 5685, 5665, 5645, 5885, 5905, 5925, 5945, // E
     5740, 5760, 5780, 5800, 5820, 5840, 5860, 5880, // F
     5658, 5695, 5732, 5769, 5806, 5843, 5880, 5917, // R
-    5362, 5399, 5436, 5473, 5510, 5547, 5584, 5621  // L
+    5362, 5399, 5436, 5473, 5510, 5547, 5584, 5621, // L
+#if defined(SEBI_WITH_X_BAND)
+    4990, 5020, 5050, 5080, 5110, 5140, 5170, 5200 // X
+#endif
 };
 
 const uint8_t powerLevelsLut[NUM_POWER_LEVELS] = {1, RACE_MODE, 14, 20, 26};

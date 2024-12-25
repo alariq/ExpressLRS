@@ -228,6 +228,8 @@ void mspVtxProcessPacket(uint8_t *packet)
             channel = ((vtxConfigPacket->band - 1) * 8) + (vtxConfigPacket->channel - 1);
             if (channel >= FREQ_TABLE_SIZE)
             {
+                //sebi: X band
+                DBGLN("Channel:%d is higher than FREQ_TABLE_SIZE: %d, setting to F4 (5800)", channel, FREQ_TABLE_SIZE);
                 channel = 27; // F4 5800MHz
             }
 
@@ -253,6 +255,11 @@ void mspVtxProcessPacket(uint8_t *packet)
             if (channel < FREQ_TABLE_SIZE)
             {
                 vtxSPIFrequency = getFreqByIdx(channel);
+            }
+            else
+            {
+                //sebi: X band
+                DBGLN("Channel:%d is higher than FREQ_TABLE_SIZE: %d", channel, FREQ_TABLE_SIZE);
             }
             break;
         }

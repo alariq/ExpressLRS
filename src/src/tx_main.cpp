@@ -30,6 +30,8 @@
 #define USBSerial Serial
 #endif
 
+#include "freqTable.h" //sebi X-band
+
 //// CONSTANTS ////
 #define MSP_PACKET_SEND_INTERVAL 10LU
 
@@ -1066,12 +1068,15 @@ void ProcessMSPPacket(uint32_t now, mspPacket_t *packet)
   }
   else if (packet->function == MSP_SET_VTX_CONFIG)
   {
-    if (packet->payload[0] < 48) // Standard 48 channel VTx table size e.g. A, B, E, F, R, L
+    //sebi: X-band
+    if (packet->payload[0] < FREQ_TABLE_SIZE) // Standard 48 channel VTx table size e.g. A, B, E, F, R, L
     {
       config.SetVtxBand(packet->payload[0] / 8 + 1);
       config.SetVtxChannel(packet->payload[0] % 8);
     } else
     {
+      //sebi: X-band
+      DBGLN("Packets containing frequency in MHz are not yet supported, freq/band: %d", packet->payload[0]);
       return; // Packets containing frequency in MHz are not yet supported.
     }
 
