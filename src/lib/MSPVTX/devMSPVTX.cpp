@@ -6,6 +6,7 @@
 #include "CRSF.h"
 #include "msptypes.h"
 #include "hwTimer.h"
+#include "logging.h"
 
 /**
  * Created by phobos-
