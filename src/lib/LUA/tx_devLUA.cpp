@@ -205,7 +205,7 @@ static struct luaItem_folder luaVtxFolder = {
 static struct luaItem_selection luaVtxBand = {
     {"Band", CRSF_TEXT_SELECTION},
     0, // value
-    "Off;A;B;E;F;R;L",
+    "Off;A;B;E;F;R;L;X",
     STR_EMPTYSPACE
 };
 
