@@ -1,0 +1,40 @@
+if problem with FSImpl on linking stage: https://github.com/espressif/arduino-esp32/pull/8768
+if problem in release build that TX after about 2 sec stops transmitting - remove debug output defines
+
+TODO:
+look at FreqCorrection/FreqCorrectionMax code, looks important
+
+connection with handset seems to be affected by DCDC. So I use USB-C to power device and only put GND + SIGNAL to WS3 board from handset, this way 0:100
+
+
+
+
+RX: serial port rx: tx 45 - must have good connection, spent half a day figuring out why no data is received
+
+
+
+yappu telemetry corresponding to ELRS: how to decifer:
+
+https://github.com/yaapu/FrskyTelemetryScript/blob/master/OTX_ETX/c480x272/SD/WIDGETS/yaapu/main.lua
+https://www.expresslrs.org/faq/#what-does-rqly-tqly-rssi-x2-snr-x2-mean
+
+
+
+if using ESP32-S3 board with flash size which is not 8MB (default for DevKit-1 board), then need to add:
+
+    board_upload.flash_size = "4MB"
+
+    (in case only 4MB is present)
+Otherwise board will no start even though it could be flashed correctly
+
+
+
+Debugging:
+----------
+First Pick Project environment (folder icon at the top), otherwise debug configuration will be created for default 'native' target.
+
+
+Flashing without platformio:
+--------
+example for rx:
+/home/a/prog/3rdparty/ExpressLRS/src/python/external/esptool/esptool.py --chip esp32 --port "/dev/ttyUSB0" --baud 460800 --before default_reset --after hard_reset write_flash -z --flash_mode dio --flash_freq 40m --flash_size 4MB 0x1000 /home/a/prog/3rdparty/ExpressLRS/src/.pio/build/Unified_ESP32_900_RX_via_UART/bootloader.bin 0x8000 /home/a/prog/3rdparty/ExpressLRS/src/.pio/build/Unified_ESP32_900_RX_via_UART/partitions.bin 0xe000 /home/a/.platformio/packages/framework-arduinoespressif32/tools/partitions/boot_app0.bin 0x10000 .pio/build/Unified_ESP32_900_RX_via_UART/firmware.bin
