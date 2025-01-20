@@ -36,9 +36,6 @@ const fhss_config_t domainsDualBand[] = {
 };
 #endif
 
-//sebi: by default use FCC frequencies
-fhss_config_t cust_domain = {"CUSTOM", FREQ_HZ_TO_REG_VAL(903500000), FREQ_HZ_TO_REG_VAL(926900000), 40, 915000000};
-
 #elif defined(RADIO_SX128X)
 #include "SX1280Driver.h"
 
@@ -52,6 +49,9 @@ const fhss_config_t domains[] = {
     FREQ_HZ_TO_REG_VAL(2400400000), FREQ_HZ_TO_REG_VAL(2479400000), 80, 2440000000}
 };
 #endif
+
+//sebi: by default use FCC frequencies
+fhss_config_t cust_domain = {"CUSTOM", FREQ_HZ_TO_REG_VAL(903500000), FREQ_HZ_TO_REG_VAL(926900000), 40, 915000000};
 
 // Our table of FHSS frequencies. Define a regulatory domain to select the correct set for your location and radio
 const fhss_config_t *FHSSconfig;
@@ -87,12 +87,14 @@ void FHSSrandomiseFHSSsequence(const uint32_t seed)
 {
     FHSSconfig = &domains[firmwareOptions.domain];
 
-#if defined(RADIO_SX127X) || defined(RADIO_LR1121) 
+#if defined(RADIO_SX127X) || defined(RADIO_LR1121) || defined(RADIO_SX128X)
     if(firmwareOptions.use_cust_freq) {
         uint32_t fs = firmwareOptions.cust_freq_s;
         uint32_t fe = firmwareOptions.cust_freq_e;
         // SX127X chip max bw is 500kHz, use 0.585 as in FCC
-        uint32_t fcnt = (uint32_t)((fe - fs)/0.585f);
+        // SX128X chip max bw is 800kHz, use 0.987 as in ISM2G4
+        float chan_dist_MHz = fs < 1000 ? 0.585f : 0.9875f;
+        uint32_t fcnt = (uint32_t)((fe - fs)/chan_dist_MHz);
 
         cust_domain.freq_start = FREQ_HZ_TO_REG_VAL(fs*1e6);
         cust_domain.freq_stop = FREQ_HZ_TO_REG_VAL(fe*1e6);

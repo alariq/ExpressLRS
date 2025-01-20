@@ -1,4 +1,5 @@
-@@require(PLATFORM, isTX, is8285)
+@@require(PLATFORM, isTX, is8285, hasSubGHz)
+ // sebi: hasSubGHz
 
 /* eslint-disable comma-dangle */
 /* eslint-disable max-len */
@@ -258,10 +259,14 @@ function init() {
     //alert("Hi");
     if(_('use_cust_freq').checked) {
       _('cust_freq_table').style.display = 'block';
+@@if hasSubGHz:
       _('reg_domain_select_sebi').style.display = 'none';
+@@end
     } else {
       _('cust_freq_table').style.display = 'none';
+@@if hasSubGHz:
       _('reg_domain_select_sebi').style.display = 'block';
+@@end
     }
   };
   // onchange is called when options are loaded
