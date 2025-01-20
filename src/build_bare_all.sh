@@ -11,7 +11,7 @@ echo Git branch name: ${branch_name}
 
 region="FCC"
 
-targets=(
+targets_900_dual=(
 Unified_ESP32_900_RX
 Unified_ESP32_900_TX
 Unified_ESP32C3_900_RX
@@ -26,6 +26,21 @@ Unified_ESP8285_900_RX
 Unified_ESP8285_900_TX
 Unified_ESP8285_LR1121_RX
 )
+
+targets_2G4=(
+Unified_ESP32_2400_RX
+Unified_ESP32_2400_TX
+Unified_ESP32_900_RX
+Unified_ESP32_900_TX
+Unified_ESP32C3_2400_RX
+Unified_ESP32S3_2400_RX
+Unified_ESP32S3_2400_TX
+Unified_ESP8285_2400_RX
+Unified_ESP8285_2400_TX
+)
+
+# TODO: add command line parameter?
+targets=( "${targets_900_dual[@]}" "${targets_2G4[@]}" )
 
 out_base_dir=./firmwares/$branch_name/$region
 
