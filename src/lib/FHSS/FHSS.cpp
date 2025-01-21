@@ -52,6 +52,7 @@ const fhss_config_t domains[] = {
 
 //sebi: by default use FCC frequencies
 fhss_config_t cust_domain = {"CUSTOM", FREQ_HZ_TO_REG_VAL(903500000), FREQ_HZ_TO_REG_VAL(926900000), 40, 915000000};
+fhss_config_t cust_domain_sec = {"CUST_SEQ", FREQ_HZ_TO_REG_VAL(2400400000), FREQ_HZ_TO_REG_VAL(2479400000), 80, 2440000000};
 
 // Our table of FHSS frequencies. Define a regulatory domain to select the correct set for your location and radio
 const fhss_config_t *FHSSconfig;
@@ -119,6 +120,20 @@ void FHSSrandomiseFHSSsequence(const uint32_t seed)
 
 #if defined(RADIO_LR1121)
     FHSSconfigDualBand = &domainsDualBand[0];
+
+    if(firmwareOptions.use_cust_freq) {
+        uint32_t fs = firmwareOptions.cust_freq_sec_s;
+        uint32_t fe = firmwareOptions.cust_freq_sec_e;
+        uint32_t fcnt = (uint32_t)((fe - fs)/0.9875f);
+
+        cust_domain.freq_start = FREQ_HZ_TO_REG_VAL(fs*1e6);
+        cust_domain.freq_stop = FREQ_HZ_TO_REG_VAL(fe*1e6);
+        cust_domain.freq_center = (fe+fs)*1e6/2;
+        cust_domain.freq_count = fcnt;
+
+        FHSSconfigDualBand = &cust_domain_sec;
+    }
+
     sync_channel_DualBand = (FHSSconfigDualBand->freq_count / 2) + 1;
     freq_spread_DualBand = (FHSSconfigDualBand->freq_stop - FHSSconfigDualBand->freq_start) * FREQ_SPREAD_SCALE / (FHSSconfigDualBand->freq_count - 1);
     secondaryBandCount = (FHSS_SEQUENCE_LEN / FHSSconfigDualBand->freq_count) * FHSSconfigDualBand->freq_count;

@@ -27,6 +27,8 @@ typedef struct _options {
     uint8_t     use_cust_freq;
     uint16_t    cust_freq_s;
     uint16_t    cust_freq_e;
+    uint16_t    cust_freq_sec_s;
+    uint16_t    cust_freq_sec_e;
     //~
     uint8_t     hasUID;
     uint8_t     uid[6];         // MY_UID derived from MY_BINDING_PHRASE

@@ -262,6 +262,9 @@ void saveOptions(Stream &stream, bool customised)
     doc["use_cust_freq"] = firmwareOptions.use_cust_freq;
     doc["cust_freq_s"] = firmwareOptions.cust_freq_s;
     doc["cust_freq_e"] = firmwareOptions.cust_freq_e;
+    // secondary band (only for lr1121)
+    doc["cust_freq_sec_s"] = firmwareOptions.cust_freq_sec_s;
+    doc["cust_freq_sec_e"] = firmwareOptions.cust_freq_sec_e;
     //~
     doc["customised"] = customised;
     doc["flash-discriminator"] = firmwareOptions.flash_discriminator;
@@ -381,6 +384,8 @@ static void options_LoadFromFlashOrFile(EspFlashStream &strmFlash)
     firmwareOptions.use_cust_freq = doc["use_cust_freq"];
     firmwareOptions.cust_freq_s = doc["cust_freq_s"];
     firmwareOptions.cust_freq_e = doc["cust_freq_e"];
+    firmwareOptions.cust_freq_sec_s = doc["cust_freq_sec_s"];
+    firmwareOptions.cust_freq_sec_e = doc["cust_freq_sec_e"];
     //~
 
     builtinOptions.clear();

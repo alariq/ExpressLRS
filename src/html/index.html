@@ -1,4 +1,4 @@
-@@require(PLATFORM, VERSION, isTX, hasSubGHz, is8285)
+@@require(PLATFORM, VERSION, isTX, hasSubGHz, is8285, chip)
 <!DOCTYPE HTML>
 <html lang="en">
 
@@ -75,11 +75,21 @@
 						</div>
 
 						<table class="mui-table" id='cust_freq_table'>
-							<tr><td colspan='2'><b>Custom Freq Setup</td></tr>
+@@if chip == 'SX128X':
+							<tr><td colspan='2'><b>Custom Freq Setup 2G4</td></tr>
+@@else:
+							<tr><td colspan='2'><b>Custom Freq Setup subGHz</td></tr>
+@@end
 							<tr><td width="30"></td><td>Start Freq</td><td><input size='3' id='cust_freq_s' name='cust_freq_s' type='text'/></td><td>Start frequency (not less then suported by the module)</td></tr>
 							<tr><td width="30"></td><td>End Freq</td><td><input size='3' id='cust_freq_e' name='cust_freq_e' type='text'/></td><td>End frequency (not less then suported by the module)</td></tr>
 						</table>
-
+@@if chip == 'LR1121':
+						<table class="mui-table" id='cust_freq_sec_table'>
+							<tr><td colspan='2'><b>Custom Freq Setup: Secondary band 2G4</td></tr>
+							<tr><td width="30"></td><td>Start Freq</td><td><input size='3' id='cust_freq_sec_s' name='cust_freq_sec_s' type='text' value="2400"/></td><td>Start frequency</td></tr>
+							<tr><td width="30"></td><td>End Freq</td><td><input size='3' id='cust_freq_sec_e' name='cust_freq_sec_e' type='text' value="2479"/></td><td>End frequency</td></tr>
+						</table>
+@@end
 						<div class="mui-textfield">
 							<input size='3' id='wifi-on-interval' name='wifi-on-interval' type='text' placeholder="Disabled"/>
 							<label for="wifi-on-interval">WiFi "auto on" interval in seconds (leave blank to disable)</label>
