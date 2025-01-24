@@ -30,8 +30,6 @@ Unified_ESP8285_LR1121_RX
 targets_2G4=(
 Unified_ESP32_2400_RX
 Unified_ESP32_2400_TX
-Unified_ESP32_900_RX
-Unified_ESP32_900_TX
 Unified_ESP32C3_2400_RX
 Unified_ESP32S3_2400_RX
 Unified_ESP32S3_2400_TX
@@ -72,3 +70,4 @@ for str in ${targets[@]}; do
 
 done
 
+whiptail --msgbox "Done generating firmwares" 10 30
