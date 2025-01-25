@@ -365,8 +365,22 @@ static struct luaItem_selection luaVtxAltCh3 = {
     STR_EMPTYSPACE
 };
 
-struct luaItem_selection* luaVtxAltChannels[] = {&luaVtxAltCh0, &luaVtxAltCh1, &luaVtxAltCh2, &luaVtxAltCh3 };
-struct luaItem_selection* luaVtxAltBands[] = {&luaVtxAltBand0, &luaVtxAltBand1, &luaVtxAltBand2, &luaVtxAltBand3 };
+static struct luaItem_selection luaVtxAltCh4 = {
+    {"AltCh4", CRSF_TEXT_SELECTION},
+    0, // value
+    "1;2;3;4;5;6;7;8",
+    STR_EMPTYSPACE
+};
+
+static struct luaItem_selection luaVtxAltBand4 = {
+    {"AltBand4", CRSF_TEXT_SELECTION},
+    0, // value
+    "Off;A;B;E;F;R;L;X",
+    STR_EMPTYSPACE
+};
+
+struct luaItem_selection* luaVtxAltChannels[] = {&luaVtxAltCh0, &luaVtxAltCh1, &luaVtxAltCh2, &luaVtxAltCh3, &luaVtxAltCh4 };
+struct luaItem_selection* luaVtxAltBands[] = {&luaVtxAltBand0, &luaVtxAltBand1, &luaVtxAltBand2, &luaVtxAltBand3, &luaVtxAltBand4 };
 static_assert(sizeof(luaVtxAltChannels) == sizeof(luaVtxAltChannels) && sizeof(luaVtxAltChannels)/sizeof(luaVtxAltChannels[0]) == NUM_ALT_VTX_CHANNELS);
 
 //~
@@ -891,6 +905,11 @@ static void registerLuaParameters()
       config.SetVtxAltBand(3, arg); }, luaVtxFolder.common.id);
     registerLUAParameter(&luaVtxAltCh3, [](struct luaPropertiesCommon *item, uint8_t arg) {
       config.SetVtxAltChannel(3, arg); }, luaVtxFolder.common.id);
+
+    registerLUAParameter(&luaVtxAltBand4, [](struct luaPropertiesCommon *item, uint8_t arg) { 
+      config.SetVtxAltBand(4, arg); }, luaVtxFolder.common.id);
+    registerLUAParameter(&luaVtxAltCh4, [](struct luaPropertiesCommon *item, uint8_t arg) {
+      config.SetVtxAltChannel(4, arg); }, luaVtxFolder.common.id);
 
     //~
   }

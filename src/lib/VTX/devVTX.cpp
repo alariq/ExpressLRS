@@ -75,15 +75,16 @@ void VtxAltChSwitchUpdate()
     }
 
     uint8_t auxNumber = config.GetVtxAltChSwitch() + 3;
-    // if not off and channel > mid value
     // num alternative channels + 1 standard default
     int8_t currentAltChAuxState = CRSF_to_N(ChannelData[auxNumber], NUM_ALT_VTX_CHANNELS + 1);
-    // if zero means use standard vtx channel
+    // if zero means use standard vtx channel, 
+    // then subtract 1 to offset to have proper indices for alt channels only
     currentAltChAuxState = currentAltChAuxState - 1;
+    // here if currentAltChAuxState == -1 => means we are using standard channel
 
     if (vtxAltChannelIndex != currentAltChAuxState)
     {
-        DBGLN("Trigger switch %s alt state", currentAltChAuxState? "to" : "from");
+        DBGLN("Trigger switch %s alt state", currentAltChAuxState==-1? "from" : "to");
         vtxAltChannelIndex = currentAltChAuxState;
         sendEepromWrite = false;
         VtxTriggerSend();

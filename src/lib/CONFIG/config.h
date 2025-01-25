@@ -15,7 +15,7 @@
 #define TX_CONFIG_MAGIC     (0b01U << 30)
 #define RX_CONFIG_MAGIC     (0b10U << 30)
 
-#define TX_CONFIG_VERSION   8U //sebi: custFreq, vtxAlt
+#define TX_CONFIG_VERSION   9U //sebi: 8 - custFreq, vtxAlt, 9 - added 1more vtxCh
 #define RX_CONFIG_VERSION   9U
 
 #if defined(TARGET_TX)
@@ -81,7 +81,7 @@ typedef enum {
 } telem_mode_t;
 
 //sebi:
-#define NUM_ALT_VTX_CHANNELS 4
+#define NUM_ALT_VTX_CHANNELS 5
 typedef union {
     struct {
         uint16_t val;
