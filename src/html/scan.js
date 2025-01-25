@@ -1,5 +1,4 @@
-@@require(PLATFORM, isTX, is8285, hasSubGHz)
- // sebi: hasSubGHz
+@@require(PLATFORM, isTX, is8285, hasSubGHz, chip)
 
 /* eslint-disable comma-dangle */
 /* eslint-disable max-len */
@@ -259,11 +258,17 @@ function init() {
     //alert("Hi");
     if(_('use_cust_freq').checked) {
       _('cust_freq_table').style.display = 'block';
+@@if chip == 'LR1121':
+      _('cust_freq_sec_table').style.display = 'block';
+@@end
 @@if hasSubGHz:
       _('reg_domain_select_sebi').style.display = 'none';
 @@end
     } else {
       _('cust_freq_table').style.display = 'none';
+@@if chip == 'LR1121':
+      _('cust_freq_sec_table').style.display = 'none';
+@@end
 @@if hasSubGHz:
       _('reg_domain_select_sebi').style.display = 'block';
 @@end
