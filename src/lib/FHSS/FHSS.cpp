@@ -173,7 +173,7 @@ void FHSSrandomiseFHSSsequenceBuild(const uint32_t seed, uint32_t freqCount, uin
         if (i % freqCount == 0) {
             inSequence[i] = syncChannel;
         } else if (i % freqCount == syncChannel) {
-            inSequence[i] = 0;
+            inSequence[i] = 0; //sebi: explanation: set 0 here because we put syncChannel in first "if" at the place of 0
         } else {
             inSequence[i] = i % freqCount;
         }

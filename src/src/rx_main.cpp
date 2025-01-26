@@ -1064,17 +1064,39 @@ static void ICACHE_RAM_ATTR updateSwitchModePendingFromOta(uint8_t newSwitchMode
     }
 }
 
+int lastSeenNonce = -1;
+int lastSeenFHSSIndex = -1;
+
 static bool ICACHE_RAM_ATTR ProcessRfPacket_SYNC(uint32_t const now, OTA_Sync_s const * const otaSync)
 {
+    DBGLN("nonce: %x %s %x fhss: %d %s %d",
+          OtaNonce, OtaNonce == otaSync->nonce ? "=" : "?", otaSync->nonce,
+          FHSSgetCurrIndex(), FHSSgetCurrIndex() == otaSync->fhssIndex ? "=" : "?", otaSync->fhssIndex);
+
+    if (connectionState != disconnected)
+    {
+        if (otaSync->nonce == lastSeenNonce && otaSync->fhssIndex == lastSeenFHSSIndex)
+        {
+            DBGLN("syn spam?");
+            return false;
+        }
+    }
+    lastSeenNonce = otaSync->nonce;
+    lastSeenFHSSIndex = otaSync->fhssIndex;
+
     // Verify the first two of three bytes of the binding ID, which should always match
-    if (otaSync->UID3 != UID[3] || otaSync->UID4 != UID[4])
+    if (otaSync->UID3 != UID[3] || otaSync->UID4 != UID[4]) {
+        DBGLN("UID mismatch");
         return false;
+    }
 
     // The third byte will be XORed with inverse of the ModelId if ModelMatch is on
     // Only require the first 18 bits of the UID to match to establish a connection
     // but the last 6 bits must modelmatch before sending any data to the FC
-    if ((otaSync->UID5 & ~MODELMATCH_MASK) != (UID[5] & ~MODELMATCH_MASK))
+    if ((otaSync->UID5 & ~MODELMATCH_MASK) != (UID[5] & ~MODELMATCH_MASK)) {
+        DBGLN("model mismatch");
         return false;
+    }
 
     LastSyncPacket = now;
 #if defined(DEBUG_RX_SCOREBOARD)
