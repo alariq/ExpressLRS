@@ -33,8 +33,20 @@ Debugging:
 ----------
 First Pick Project environment (folder icon at the top), otherwise debug configuration will be created for default 'native' target.
 
+For verbose build add --verbose to pio command
+# e.g. ~/.platformio/penv/bin/platformio run --target upload --environment Unified_ESP8285_900_RX_via_UART --upload-port /dev/ttyUSB0 --verbose
+#
 
 Flashing without platformio:
 --------
 example for rx:
+
+esp32:
+-----
+
 /home/a/prog/3rdparty/ExpressLRS/src/python/external/esptool/esptool.py --chip esp32 --port "/dev/ttyUSB0" --baud 460800 --before default_reset --after hard_reset write_flash -z --flash_mode dio --flash_freq 40m --flash_size 4MB 0x1000 /home/a/prog/3rdparty/ExpressLRS/src/.pio/build/Unified_ESP32_900_RX_via_UART/bootloader.bin 0x8000 /home/a/prog/3rdparty/ExpressLRS/src/.pio/build/Unified_ESP32_900_RX_via_UART/partitions.bin 0xe000 /home/a/.platformio/packages/framework-arduinoespressif32/tools/partitions/boot_app0.bin 0x10000 .pio/build/Unified_ESP32_900_RX_via_UART/firmware.bin
+
+esp8266:
+-------
+
+/home/a/.platformio/penv/bin/python /home/a/prog/3rdparty/ExpressLRS/src/python/external/esptool/esptool.py -b 460800 -p /dev/ttyUSB0 -c esp8266 --before default_reset --after soft_reset write_flash 0x0 firmware.bin
